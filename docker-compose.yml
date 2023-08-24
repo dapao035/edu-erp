@@ -1,0 +1,64 @@
+version: '1'
+services:
+  nginx:
+    container_name: hzb_nginx
+    image: nginx:1.20.1
+    restart: unless-stopped
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf/conf.d:/etc/nginx/conf.d
+      - ./nginx/log:/var/log/nginx
+      - ./nginx/html:/usr/share/nginx/html
+
+  hzb_mysql:
+    container_name: hzb_mysql
+    image: mysql:5.6
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      TZ: "Asia/Shanghai"
+      MYSQL_USER: "erp"
+      MYSQL_PASSWORD: "111"
+      MYSQL_ROOT_PASSWORD: "123456"
+    volumes:
+      - ./mysql/log:/var/log/mysql
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/conf:/etc/mysql
+
+  hzb_redis:
+    container_name: hzb_redis
+    image: redis:7.0.10
+    restart: unless-stopped
+    # 可开放出来
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/data
+    command: redis-server --save 60 1 --loglevel warning
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "9380:80"
+    environment:
+      MYSQL_USER: "erp"
+      MYSQL_PASSWORD: "111"
+      MYSQL_ROOT_PASSWORD: "123456"
+      PMA_HOST: hzb_mysql
+
+  java:
+    image: openjdk:8
+    container_name: hzb_java
+    restart: unless-stopped
+    ports:
+      - "8106:8106"
+    working_dir: /home/html/jar
+    volumes:
+      - ./nginx/html/www-hzb:/home/html
+      - ./nginx/log:/home/log
+    command: java -jar hzb-base-api.jar &

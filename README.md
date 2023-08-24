@@ -77,4 +77,10 @@ c: 跨域导致的无法请求，可以在application.yml的 allowOrigin: 参数
 
 #### 以个人学习和研究为目的的可以免费下载和试用本软件，以商业用途为目的的需要购买商业授权，请联系客服：Monica：13009401779 (手机+微信)
 
-
+#### 添加docker-compose方便docker部署
+- 利用'docker-compose up -d'一键部署
+- 访问地址：http://域名:8088
+- mysql
+  - 用户：root 密码：root 
+  - 用户：erp 密码:111
+- 用户名：admin 初始密码：123
